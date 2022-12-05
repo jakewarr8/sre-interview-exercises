@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: externalscaler-license
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: externalscaler-license
+  template:
+    metadata:
+      labels:
+        app: externalscaler-license
+    spec:
+      containers:
+      - name: scaler
+        image: my-custom-image:unique-tag
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 6000
+        - containerPort: 3333
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: externalscaler-license
+spec:
+  ports:
+  - port: 6000
+    targetPort: 6000
+    name: proto
+  - port: 3333
+    targetPort: 3333
+    name: http
+  selector:
+    app: externalscaler-license

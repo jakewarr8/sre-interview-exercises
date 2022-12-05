@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: externalscaler-license
+  namespace: tenant-a
+spec:
+  scaleTargetRef:
+    name: scaled-service
+  pollingInterval: 20
+  maxReplicaCount: 2
+  cooldownPeriod: 15
+  triggers:
+    - type: external
+      metadata:
+        scalerAddress: externalscaler-license.default:6000

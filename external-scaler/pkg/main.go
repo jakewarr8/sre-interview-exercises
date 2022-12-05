@@ -15,7 +15,7 @@ import (
 
 type ExternalScaler struct {
 	Global bool
-  Last map[string]bool
+	Last   map[string]bool
 	pb.UnsafeExternalScalerServer
 }
 
@@ -58,20 +58,20 @@ func (e *ExternalScaler) GetMetrics(_ context.Context, metricRequest *pb.GetMetr
 }
 
 // TODO: Get tenant info from license service
-func (e *ExternalScaler) isActiveTenant(ns string) (bool) {
-  isActive := false
+func (e *ExternalScaler) isActiveTenant(ns string) bool {
+	isActive := false
 	query := fmt.Sprintf("tenant=%s", ns)
 	_, err := http.Get(fmt.Sprintf("http://licenses.default.svc.cluster.local:8080/tenant?%s", query))
 	if err != nil {
 		log.Printf("failed request %v", status.Error(codes.Internal, err.Error()))
-    if val, ok := e.Last[ns]; ok {
-      return val
-    }
+		if val, ok := e.Last[ns]; ok {
+			return val
+		}
 	}
-  
-  isActive = e.Global
-  e.Last[ns] = isActive
-  
+
+	isActive = e.Global
+	e.Last[ns] = isActive
+
 	return isActive
 }
 
